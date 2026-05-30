@@ -51,6 +51,70 @@ body::before{content:"";position:fixed;inset:0;
 .dot-live.on{background:var(--green);animation:blink 2s infinite}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
 
+/* LOGIN SCREEN */
+#loginScreen{position:fixed;inset:0;background:var(--navy);z-index:9999;
+  display:flex;align-items:center;justify-content:center;flex-direction:column}
+#loginScreen.hidden{display:none}
+.login-box{background:var(--navy2);border:1px solid rgba(0,200,230,0.2);border-radius:20px;
+  padding:40px 44px;width:380px;display:flex;flex-direction:column;gap:18px;
+  box-shadow:0 24px 60px rgba(0,0,0,0.5)}
+.login-logo{width:52px;height:52px;background:linear-gradient(135deg,#1563e0,#00c8e6);
+  border-radius:14px;display:flex;align-items:center;justify-content:center;
+  font-family:"Rajdhani",sans-serif;font-size:22px;font-weight:700;color:#fff;
+  margin:0 auto 4px;overflow:hidden}
+.login-logo img{width:100%;height:100%;object-fit:contain;display:none}
+.login-title{font-family:"Rajdhani",sans-serif;font-size:26px;font-weight:700;
+  color:#fff;text-align:center;line-height:1}
+.login-sub{font-size:12px;color:var(--muted);text-align:center;letter-spacing:.5px}
+.login-inp{background:rgba(255,255,255,0.04);border:1px solid rgba(0,200,230,0.2);
+  color:var(--text);font-size:14px;font-family:"DM Sans",sans-serif;
+  padding:12px 16px;border-radius:10px;outline:none;transition:border-color .15s;width:100%}
+.login-inp:focus{border-color:var(--cyan)}
+.login-inp::placeholder{color:var(--muted2)}
+.btn-login{background:linear-gradient(135deg,#1563e0,#00a8c8);border:none;color:#fff;
+  font-family:"Rajdhani",sans-serif;font-size:16px;font-weight:700;padding:13px;
+  border-radius:10px;cursor:pointer;transition:opacity .15s,transform .1s;letter-spacing:.5px;width:100%}
+.btn-login:hover{opacity:.88;transform:translateY(-1px)}
+.login-err{font-size:12px;color:var(--red);text-align:center;min-height:16px}
+
+/* ACCOUNT SWITCHER */
+.acct-switcher{display:flex;align-items:center;gap:8px}
+.acct-sel{background:rgba(255,255,255,0.05);border:1px solid rgba(0,200,230,0.2);
+  color:var(--text);font-size:12px;font-family:"DM Sans",sans-serif;
+  padding:6px 10px;border-radius:8px;outline:none;cursor:pointer;max-width:180px}
+.acct-sel option{background:#0d1b3e}
+.btn-add-acct{background:transparent;border:1px solid rgba(0,200,230,0.25);color:var(--cyan);
+  font-size:11px;font-family:"DM Sans",sans-serif;padding:6px 10px;border-radius:8px;
+  cursor:pointer;white-space:nowrap;transition:all .15s}
+.btn-add-acct:hover{background:rgba(0,200,230,0.08)}
+.btn-logout{background:transparent;border:none;color:var(--muted2);font-size:11px;
+  cursor:pointer;padding:6px 8px;border-radius:6px;transition:color .15s}
+.btn-logout:hover{color:var(--red)}
+
+/* MODAL NOVA CONTA */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:8000;
+  display:none;align-items:center;justify-content:center;backdrop-filter:blur(4px)}
+.modal-overlay.show{display:flex}
+.modal-box{background:var(--navy2);border:1px solid rgba(0,200,230,0.2);border-radius:16px;
+  padding:28px 32px;width:420px;display:flex;flex-direction:column;gap:14px}
+.modal-title{font-family:"Rajdhani",sans-serif;font-size:18px;font-weight:600;color:#fff}
+.modal-row{display:flex;flex-direction:column;gap:5px}
+.modal-lbl{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:1px}
+.modal-inp{background:rgba(255,255,255,0.04);border:1px solid rgba(0,200,230,0.2);
+  color:var(--text);font-size:13px;font-family:"DM Sans",sans-serif;
+  padding:9px 12px;border-radius:8px;outline:none;width:100%}
+.modal-inp:focus{border-color:var(--cyan)}
+.modal-btns{display:flex;gap:10px;margin-top:4px}
+.btn-modal-ok{flex:1;background:linear-gradient(135deg,#1563e0,#00a8c8);border:none;
+  color:#fff;font-family:"Rajdhani",sans-serif;font-size:15px;font-weight:700;
+  padding:10px;border-radius:8px;cursor:pointer;transition:opacity .15s}
+.btn-modal-ok:hover{opacity:.88}
+.btn-modal-cancel{flex:1;background:transparent;border:1px solid rgba(255,255,255,0.1);
+  color:var(--muted);font-family:"DM Sans",sans-serif;font-size:13px;
+  padding:10px;border-radius:8px;cursor:pointer;transition:all .15s}
+.btn-modal-cancel:hover{border-color:var(--red);color:var(--red)}
+
+
 /* MAIN */
 .main{margin-left:220px;min-height:100vh;position:relative;z-index:1}
 
@@ -259,6 +323,46 @@ tr:hover td{background:rgba(0,200,230,0.025)}
 </div>
 
 <!-- SIDEBAR -->
+
+<!-- LOGIN SCREEN -->
+<div id="loginScreen">
+  <div class="login-box">
+    <div class="login-logo" id="loginLogo">
+      <img id="loginLogoImg" alt="Logo"/>
+      <span id="loginLogoTxt">RS</span>
+    </div>
+    <div class="login-title">RuahSystems</div>
+    <div class="login-sub">Berg Braga · Gestor de Tráfego</div>
+    <input type="password" class="login-inp" id="loginPwd" placeholder="Senha de acesso..." 
+      onkeydown="if(event.key==='Enter')doLogin()"/>
+    <button class="btn-login" onclick="doLogin()">Entrar no Dashboard</button>
+    <div class="login-err" id="loginErr"></div>
+  </div>
+</div>
+
+<!-- MODAL NOVA CONTA -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal-box">
+    <div class="modal-title">➕ Adicionar Conta</div>
+    <div class="modal-row">
+      <span class="modal-lbl">Nome da Conta</span>
+      <input type="text" class="modal-inp" id="mNome" placeholder="Ex: Be Queen, Cliente X..."/>
+    </div>
+    <div class="modal-row">
+      <span class="modal-lbl">Access Token Meta</span>
+      <input type="password" class="modal-inp" id="mToken" placeholder="EAA..."/>
+    </div>
+    <div class="modal-row">
+      <span class="modal-lbl">ID da Conta (act_ID)</span>
+      <input type="text" class="modal-inp" id="mAcct" placeholder="act_000000000000000"/>
+    </div>
+    <div class="modal-btns">
+      <button class="btn-modal-cancel" onclick="closeModal()">Cancelar</button>
+      <button class="btn-modal-ok" onclick="saveAccount()">Salvar Conta</button>
+    </div>
+  </div>
+</div>
+
 <aside class="sidebar">
   <div class="sidebar-logo">
     <div class="brand-wrap">
@@ -319,11 +423,17 @@ tr:hover td{background:rgba(0,200,230,0.025)}
       <div class="page-title">Meta Ads Dashboard</div>
       <div class="page-sub" id="pageSub">Be Queen · Conta CA-01 · RuahSystems</div>
     </div>
-    <div class="topbar-inputs">
-      <input type="password" id="tokenIn" placeholder="Access Token Meta..." style="width:210px"/>
-      <input type="text" id="acctIn" placeholder="act_ID da conta..." style="width:170px"/>
-      <button class="btn-load" onclick="loadAll()">⟳ Carregar Dados</button>
+    <div class="acct-switcher">
+      <select class="acct-sel" id="acctSel" onchange="switchAccount()">
+        <option value="">Selecione uma conta...</option>
+      </select>
+      <button class="btn-add-acct" onclick="openModal()">+ Conta</button>
+      <button class="btn-load" onclick="loadAll()">⟳ Carregar</button>
+      <button class="btn-logout" onclick="doLogout()" title="Sair">⏻</button>
     </div>
+    <!-- inputs ocultos mantidos para compatibilidade -->
+    <input type="hidden" id="tokenIn"/>
+    <input type="hidden" id="acctIn"/>
   </div>
 
   <!-- FILTERS -->
@@ -498,6 +608,115 @@ tr:hover td{background:rgba(0,200,230,0.025)}
 </main>
 
 <script>
+// ── AUTH & ACCOUNTS ──────────────────────────────────────
+const PWD_HASH = "Aero1908@@"; // senha mestra
+
+function doLogin(){
+  const pwd = document.getElementById('loginPwd').value;
+  if(pwd === PWD_HASH){
+    document.getElementById('loginScreen').classList.add('hidden');
+    sessionStorage.setItem('ruah_auth','1');
+    initAccounts();
+  } else {
+    const err = document.getElementById('loginErr');
+    err.textContent = 'Senha incorreta. Tente novamente.';
+    document.getElementById('loginPwd').value = '';
+    setTimeout(()=>err.textContent='', 3000);
+  }
+}
+
+function doLogout(){
+  if(!confirm('Deseja sair do dashboard?'))return;
+  sessionStorage.removeItem('ruah_auth');
+  document.getElementById('loginPwd').value = '';
+  document.getElementById('loginScreen').classList.remove('hidden');
+}
+
+// Verifica se já está logado
+(function(){
+  if(sessionStorage.getItem('ruah_auth')==='1'){
+    document.getElementById('loginScreen').classList.add('hidden');
+    setTimeout(initAccounts, 50);
+  }
+})();
+
+// ── ACCOUNTS ──────────────────────────────────────────────
+function getAccounts(){
+  try{ return JSON.parse(localStorage.getItem('ruah_accounts')||'[]'); }catch(e){ return []; }
+}
+function saveAccounts(arr){
+  try{ localStorage.setItem('ruah_accounts', JSON.stringify(arr)); }catch(e){}
+}
+
+function initAccounts(){
+  const accounts = getAccounts();
+  const sel = document.getElementById('acctSel');
+  sel.innerHTML = '<option value="">Selecione uma conta...</option>';
+  accounts.forEach((a,i)=>{
+    const opt = document.createElement('option');
+    opt.value = i;
+    opt.textContent = a.nome;
+    sel.appendChild(opt);
+  });
+  // Carrega última conta usada automaticamente
+  const lastIdx = localStorage.getItem('ruah_last_acct');
+  if(lastIdx!==null && accounts[+lastIdx]){
+    sel.value = lastIdx;
+    switchAccount(true);
+  }
+  // Restaura logo
+  try{
+    const saved = localStorage.getItem('ruah_logo');
+    if(saved){ applyLogo(saved); applyLoginLogo(saved); }
+  }catch(e){}
+}
+
+function switchAccount(auto){
+  const sel = document.getElementById('acctSel');
+  const idx = sel.value;
+  if(idx==='')return;
+  const accounts = getAccounts();
+  const acct = accounts[+idx];
+  if(!acct)return;
+  document.getElementById('tokenIn').value = acct.token;
+  document.getElementById('acctIn').value = acct.acct;
+  document.getElementById('pageSub').textContent = acct.nome + ' · RuahSystems';
+  localStorage.setItem('ruah_last_acct', idx);
+  if(!auto) loadAll();
+}
+
+function openModal(){
+  document.getElementById('modalOverlay').classList.add('show');
+  document.getElementById('mNome').focus();
+}
+function closeModal(){
+  document.getElementById('modalOverlay').classList.remove('show');
+  document.getElementById('mNome').value='';
+  document.getElementById('mToken').value='';
+  document.getElementById('mAcct').value='';
+}
+function saveAccount(){
+  const nome  = document.getElementById('mNome').value.trim();
+  const token = document.getElementById('mToken').value.trim();
+  const acct  = document.getElementById('mAcct').value.trim().replace(/^act_/,'');
+  if(!nome||!token||!acct){ alert('Preencha todos os campos.'); return; }
+  const accounts = getAccounts();
+  accounts.push({nome, token, acct});
+  saveAccounts(accounts);
+  closeModal();
+  initAccounts();
+  // seleciona a nova conta
+  const sel = document.getElementById('acctSel');
+  sel.value = accounts.length - 1;
+  switchAccount(false);
+}
+
+function applyLoginLogo(src){
+  const img = document.getElementById('loginLogoImg');
+  const txt = document.getElementById('loginLogoTxt');
+  if(img&&txt){ img.src=src; img.style.display='block'; txt.style.display='none'; }
+}
+
 // ── CONFIG ────────────────────────────────────────────────
 let TOKEN = '', ACCT = '';
 let currentPeriod = 'last_30d';
@@ -552,7 +771,7 @@ function setPeriod(p, btn){
 async function loadAll(){
   TOKEN = document.getElementById('tokenIn').value.trim();
   ACCT  = document.getElementById('acctIn').value.trim().replace(/^act_/,'');
-  if(!TOKEN||!ACCT){ alert('Preencha o Access Token e o ID da conta.'); return; }
+  if(!TOKEN||!ACCT){ alert('Selecione uma conta ou adicione uma nova com "+ Conta".'); return; }
 
   try{
     const fields = 'spend,impressions,clicks,ctr,cpc,reach,cpm,actions,action_values';
