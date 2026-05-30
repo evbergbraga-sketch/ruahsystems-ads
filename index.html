@@ -31,7 +31,8 @@ body::before{content:"";position:fixed;inset:0;
 .brand-wrap{display:flex;align-items:center;gap:10px}
 .brand-icon{width:38px;height:38px;background:linear-gradient(135deg,#1563e0,#00c8e6);
   border-radius:10px;display:flex;align-items:center;justify-content:center;
-  font-family:"Rajdhani",sans-serif;font-size:18px;font-weight:700;color:#fff;flex-shrink:0}
+  font-family:"Rajdhani",sans-serif;font-size:18px;font-weight:700;color:#fff;flex-shrink:0;overflow:hidden}
+.brand-icon img{width:100%;height:100%;object-fit:contain}
 .brand-name{font-family:"Rajdhani",sans-serif;font-size:17px;font-weight:700;color:#fff;line-height:1.1}
 .brand-sub{font-size:10px;color:var(--cyan);letter-spacing:1.5px;text-transform:uppercase}
 .nav{flex:1;padding:16px 10px;display:flex;flex-direction:column;gap:2px}
@@ -261,37 +262,39 @@ tr:hover td{background:rgba(0,200,230,0.025)}
 <aside class="sidebar">
   <div class="sidebar-logo">
     <div class="brand-wrap">
-      <div class="brand-icon">RS</div>
+      <div class="brand-icon" id="brandIcon" onclick="document.getElementById('logoInput').click()" title="Clique para adicionar logo" style="cursor:pointer"><span id="brandInitials">RS</span><img id="brandImg" style="display:none;width:100%;height:100%;object-fit:contain" alt="Logo"/></div>
       <div>
         <div class="brand-name">RuahSystems</div>
         <div class="brand-sub">Berg Braga</div>
       </div>
     </div>
+    <input type="file" id="logoInput" accept="image/*" style="display:none" onchange="loadLogo(this)"/>
+    <div style="font-size:10px;color:var(--muted2);margin-top:6px;cursor:pointer;text-align:center" onclick="document.getElementById('logoInput').click()">📷 clique no ícone para adicionar logo</div>
   </div>
   <nav class="nav">
     <div class="nav-section">Dashboard</div>
-    <button class="nav-item active" onclick="scrollTo('metricsGrid')">
+    <button class="nav-item active" onclick="navScrollTo('metricsGrid')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
       Visão Geral
     </button>
-    <button class="nav-item" onclick="scrollTo('chartsRow')">
+    <button class="nav-item" onclick="navScrollTo('chartsRow')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
       Gráficos
     </button>
-    <button class="nav-item" onclick="scrollTo('funilSection')">
+    <button class="nav-item" onclick="navScrollTo('funilSection')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 4h16l-7 9v6l-2 1v-7L4 4z"/></svg>
       Funil
     </button>
-    <button class="nav-item" onclick="scrollTo('oppsSection')">
+    <button class="nav-item" onclick="navScrollTo('oppsSection')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 8v4l3 3"/></svg>
       Oportunidades
     </button>
-    <button class="nav-item" onclick="scrollTo('tableSection')">
+    <button class="nav-item" onclick="navScrollTo('tableSection')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 3h18v4H3z"/><path d="M3 10h12v4H3z"/><path d="M3 17h8v4H3z"/></svg>
       Campanhas
     </button>
     <div class="nav-section">Relatório</div>
-    <button class="nav-item" onclick="scrollTo('pdfRow')">
+    <button class="nav-item" onclick="navScrollTo('pdfRow')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
       Gerar PDF
     </button>
@@ -514,7 +517,7 @@ function unload(){ document.getElementById('loading').classList.remove('show'); 
 function fmtR(n){ if(!n&&n!==0)return'—'; return'R$ '+parseFloat(n).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2}); }
 function fmtN(n){ if(n==null||isNaN(n))return'—'; n=+n; if(n>=1e6)return(n/1e6).toFixed(1)+'M'; if(n>=1e3)return(n/1e3).toFixed(1)+'K'; return n.toLocaleString('pt-BR'); }
 function fmtP(n){ if(!n&&n!==0)return'—'; return parseFloat(n).toFixed(2)+'%'; }
-function scrollTo(id){ const el=document.getElementById(id); if(el)el.scrollIntoView({behavior:'smooth',block:'start'}); }
+function navScrollTo(id){ const el=document.getElementById(id); if(el)el.scrollIntoView({behavior:'smooth',block:'start'}); }
 
 function deltaEl(id, cur, prev, inverse){
   const el = document.getElementById(id); if(!el)return;
@@ -940,6 +943,37 @@ function printReport(){
   if(!insightsMain&&!allCampaigns.length){ alert('Carregue os dados antes de gerar o PDF.'); return; }
   window.print();
 }
+
+// ── LOGO ──────────────────────────────────────────────────
+function loadLogo(input){
+  if(!input.files||!input.files[0])return;
+  const reader = new FileReader();
+  reader.onload = function(e){
+    applyLogo(e.target.result);
+    try{ localStorage.setItem('ruah_logo', e.target.result); }catch(err){}
+  };
+  reader.readAsDataURL(input.files[0]);
+}
+function applyLogo(src){
+  const img = document.getElementById('brandImg');
+  const initials = document.getElementById('brandInitials');
+  const icon = document.getElementById('brandIcon');
+  if(img&&initials&&icon){
+    img.src = src;
+    img.style.display = 'block';
+    initials.style.display = 'none';
+    icon.style.background = 'transparent';
+    icon.style.border = '1px solid rgba(0,200,230,0.2)';
+    icon.style.borderRadius = '10px';
+  }
+}
+// Restaura logo salvo
+(function(){
+  try{
+    const saved = localStorage.getItem('ruah_logo');
+    if(saved) applyLogo(saved);
+  }catch(e){}
+})();
 </script>
 </body>
 </html>
